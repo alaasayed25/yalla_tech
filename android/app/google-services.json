@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "739737144161",
+    "project_id": "yalla-tech",
+    "storage_bucket": "yalla-tech.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:739737144161:android:1982f6348813ea4a33d320",
+        "android_client_info": {
+          "package_name": "com.example.yalla_tech"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMl0HO4-xM_WjCxyOqagjaIUYgfJlhmDs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

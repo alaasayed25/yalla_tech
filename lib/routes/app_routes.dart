@@ -1,18 +1,25 @@
-import 'package:flutter/material.dart';
-import 'package:yalla_tech/ui/%20screens/auth/login_screen.dart';
-import 'package:yalla_tech/ui/%20screens/home/home_screen.dart';
 
+import 'package:flutter/material.dart';
+import '../ui/ screens/auth/auth_gate_screen.dart';
+import '../ui/ screens/auth/login_screen.dart';
+import '../ui/ screens/auth/register_screen.dart';
+import '../ui/ screens/home/home_screen.dart';
+import '../ui/ screens/splash/splash_screen.dart';
 
 class AppRoutes {
-
-  static const login = "/login";
-  static const home = "/home";
+  static const String splash = "/";
+  static const String login = "/login";
+  static const String register = "/register";
+  static const String authGate = "/authGate";
+  static const String home = "/home";
+  static const String logout = "/logout";
 
   static Map<String, WidgetBuilder> routes = {
-
+    splash: (context) => const SplashScreen(),
     login: (context) => const LoginScreen(),
+    register: (context) => const RegisterScreen(),
+    authGate: (context) => const AuthGateScreen(),
     home: (context) => const HomeScreen(),
-
+    logout: (context) => const LogoutScreen(),
   };
-
 }
