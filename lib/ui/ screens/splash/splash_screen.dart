@@ -1,49 +1,7 @@
-// import 'dart:async';
-// import 'package:flutter/material.dart';
-// import '../auth/login_screen.dart';
-//
-// class SplashScreen extends StatefulWidget {
-//   const SplashScreen({super.key});
-//
-//   @override
-//   State<SplashScreen> createState() => _SplashScreenState();
-// }
-//
-// class _SplashScreenState extends State<SplashScreen> {
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//
-//     Timer(const Duration(seconds: 3), () {
-//       Navigator.pushReplacement(
-//         context,
-//         MaterialPageRoute(
-//           builder: (context) => const LoginScreen(),
-//         ),
-//       );
-//     });
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//
-//     return const Scaffold(
-//       body: Center(
-//         child: Text(
-//           "Yalla Tech 🚀",
-//           style: TextStyle(
-//             fontSize: 30,
-//             fontWeight: FontWeight.bold,
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // <-- ضفنا المكتبة هنا
 import '../../../routes/app_routes.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -67,13 +25,23 @@ class _SplashScreenState extends State<SplashScreen> {
     // 2. هنشوف هل فيه مستخدم مسجل دخول (Firebase)؟
     User? user = FirebaseAuth.instance.currentUser;
 
+    // 3. بنسأل الذاكرة: هل اليوزر ده شاف الانترو قبل كدا؟
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenIntro = prefs.getBool('hasSeenIntro') ?? false;
+
     if (mounted) {
       if (user != null) {
-        // لو مسجل (زي ze@gmail.com) -> ادخل على الهوم
+        // لو مسجل دخول جاهز -> ادخل على الهوم مباشرة
         Navigator.pushReplacementNamed(context, AppRoutes.home);
       } else {
-        // لو جديد -> روح لشاشة الزرارين (Login / Signup)
-        Navigator.pushReplacementNamed(context, AppRoutes.authGate);
+        // لو مش مسجل، هنشوف بقى هو شاف الانترو ولا لأ
+        if (hasSeenIntro) {
+          // لو شافها قبل كده -> روح لشاشة الزرارين (Login / Signup)
+          Navigator.pushReplacementNamed(context, AppRoutes.authGate);
+        } else {
+          // لو أول مرة يفتح التطبيق خالص -> وديه لشاشة الانترو
+          Navigator.pushReplacementNamed(context, AppRoutes.intro);
+        }
       }
     }
   }

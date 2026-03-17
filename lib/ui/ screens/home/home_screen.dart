@@ -233,8 +233,8 @@
 //   }
 // }
 
-
 import 'package:flutter/material.dart';
+import 'package:yalla_tech/routes/app_routes.dart'; // ضفنا الامبورت ده عشان يعرف مسار الـ Logout
 import '../profile/profile_screen.dart';
 import '../quiz/quiz_screen.dart';
 import '../upload_cv/upload_cv_screen.dart';
@@ -269,12 +269,27 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedItemColor: const Color(0xFF2196F3),
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
-        onTap: (value) => setState(() => index = value),
+        onTap: (value) {
+          // التعديل هنا: لو اختار التاب الخامس (رقم 4 لأننا بنبدأ من 0)
+          if (value == 4) {
+            // افتح شاشة تأكيد الخروج
+            Navigator.of(context).pushNamed(AppRoutes.logout);
+          } else {
+            // لو اختار أي تاب تاني، غير الصفحة عادي جداً
+            setState(() => index = value);
+          }
+        },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.dashboard_rounded), label: "Explore"),
           BottomNavigationBarItem(icon: Icon(Icons.auto_stories), label: "Study"),
           BottomNavigationBarItem(icon: Icon(Icons.psychology), label: "Career"),
           BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: "Me"),
+
+          // ضفنا التاب الخامس هنا
+          BottomNavigationBarItem(
+              icon: Icon(Icons.logout_rounded, color: Colors.redAccent),
+              label: "Logout"
+          ),
         ],
       ),
     );
@@ -309,7 +324,7 @@ class Dashboard extends StatelessWidget {
                 style: TextStyle(color: Colors.grey, fontSize: 16)),
             const SizedBox(height: 25),
 
-            // 2. كارت الذكاء الاصطناعي (تم تصحيح الأخطاء هنا)
+            // 2. كارت الذكاء الاصطناعي
             _buildAICard(),
             const SizedBox(height: 30),
 

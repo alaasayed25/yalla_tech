@@ -1,11 +1,27 @@
 import 'package:flutter/material.dart';
-
-// Import local screens to reference them
-import '../home/home_screen.dart'; // Adjust if path is different
-// import '../auth/login_screen.dart'; // We'll use routes, but this is for reference
+import 'package:firebase_auth/firebase_auth.dart'; // سطر مهم جداً للخروج الحقيقي
 
 class LogoutScreen extends StatelessWidget {
   const LogoutScreen({super.key});
+
+  // دالة الخروج المنفصلة عشان الكود يكون منظم
+  Future<void> _signOut(BuildContext context) async {
+    try {
+      // 1. أمر الخروج من Firebase
+      await FirebaseAuth.instance.signOut();
+
+      // 2. الرجوع لصفحة اللوجين ومسح الـ History
+      // تأكد أن الاسم في app_routes هو '/login'
+      if (context.mounted) {
+        Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+      }
+    } catch (e) {
+      // لو حصل مشكلة اظهر رسالة خطأ
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("خطأ أثناء تسجيل الخروج: $e")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +39,7 @@ class LogoutScreen extends StatelessWidget {
             const Icon(
               Icons.logout_rounded,
               size: 120,
-              color: Colors.grey,
+              color: Colors.redAccent, // غيرت اللون لأحمر خفيف عشان يعبر عن التنبيه
             ),
             const SizedBox(height: 30),
             const Text(
@@ -33,38 +49,31 @@ class LogoutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             const Text(
-              'تنبيه: سيؤدي تسجيل الخروج إلى حذف جميع البيانات المحلية غير المحفوظة.',
+              'سيتم إغلاق الجلسة الحالية، وستحتاج لإدخال بياناتك مرة أخرى للدخول.',
               style: TextStyle(fontSize: 16, color: Colors.blueGrey),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 50),
 
-            // --- زرار تأكيد الخروج (أحمر) ---
+            // --- زرار تأكيد الخروج ---
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.redAccent,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              onPressed: () {
-                // TODO: 1. أضف هنا كود الـ Logic لمسح الـ Token (SharedPrefs, Firebase, etc.)
-
-                // 2. النقل لصفحة اللوجين ومسح الـ Back Stack
-                // بنستخدم pushNamedAndRemoveUntil عشان نضمن إنه ما يرجعش للصفحة دي
-                Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
-              },
+              onPressed: () => _signOut(context), // استدعاء دالة الخروج
               child: const Text(
-                'تسجيل الخروج',
+                'تأكيد تسجيل الخروج',
                 style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 15),
 
-            // --- زرار الإلغاء (رمادي) ---
+            // --- زرار الإلغاء ---
             TextButton(
               onPressed: () {
-                // بيرجع للصفحة اللي قبلها (مثلاً HomeScreen)
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(); // يرجعك لصفحة الـ Profile أو الـ Home
               },
               child: const Text(
                 'إلغاء',
