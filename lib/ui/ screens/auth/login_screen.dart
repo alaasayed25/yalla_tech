@@ -1,100 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:yalla_tech/data/services/auth_service.dart';
-// import 'package:yalla_tech/widgets/custom_button.dart';
-// import 'package:yalla_tech/widgets/custom_textfield.dart';
-// import '../../../routes/app_routes.dart';
-//
-// class LoginScreen extends StatefulWidget {
-//   const LoginScreen({super.key});
-//
-//   @override
-//   State<LoginScreen> createState() => _LoginScreenState();
-// }
-//
-// class _LoginScreenState extends State<LoginScreen> {
-//
-//   final TextEditingController emailController = TextEditingController();
-//   final TextEditingController passwordController = TextEditingController();
-//
-//   bool isLoading = false;
-//
-//   void login() async {
-//
-//     setState(() {
-//       isLoading = true;
-//     });
-//
-//     final token = await AuthService.login(
-//       email: emailController.text,
-//       password: passwordController.text,
-//     );
-//
-//     setState(() {
-//       isLoading = false;
-//     });
-//
-//     if (token != null) {
-//
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(content: Text("Login Success")),
-//       );
-//
-//       Navigator.pushNamed(context, AppRoutes.home);
-//
-//     } else {
-//
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(content: Text("Login Failed")),
-//       );
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//
-//     return Scaffold(
-//
-//       appBar: AppBar(title: const Text("Login")),
-//
-//       body: Padding(
-//
-//         padding: const EdgeInsets.all(20),
-//
-//         child: Column(
-//
-//           children: [
-//
-//             CustomTextField(
-//               hint: "Email",
-//               controller: emailController,
-//             ),
-//
-//             const SizedBox(height: 15),
-//
-//             CustomTextField(
-//               hint: "Password",
-//               obscure: true,
-//               controller: passwordController,
-//             ),
-//
-//             const SizedBox(height: 20),
-//
-//             isLoading
-//                 ? const CircularProgressIndicator()
-//                 : CustomButton(
-//               text: "Login",
-//               onPressed: login,
-//             ),
-//
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-
-
 import 'package:flutter/material.dart';
 import 'package:yalla_tech/data/services/auth_service.dart';
 import 'package:yalla_tech/widgets/custom_button.dart';
@@ -109,13 +12,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // 1. استخدام final مع الـ Controllers
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
   bool isLoading = false;
 
-  // 2. تنظيف الذاكرة (Memory Management)
   @override
   void dispose() {
     emailController.dispose();
@@ -124,51 +24,42 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void login() async {
-    // التحقق من البيانات قبل الإرسال (Validation بسيط)
-    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-      _showSnackBar("Please enter email and password");
+    if (emailController.text.trim().isEmpty || passwordController.text.isEmpty) {
+      _showSnackBar("Please enter email and password", color: Colors.orange);
       return;
     }
 
     setState(() => isLoading = true);
 
     try {
-      final token = await AuthService.login(
-        email: emailController.text.trim(), // trim عشان تشيل المسافات الزيادة
+      final user = await AuthService.login(
+        email: emailController.text.trim(),
         password: passwordController.text,
       );
 
-      // 3. التأكد إن الـ Widget لسه موجودة قبل استخدام الـ Context
       if (!mounted) return;
-
       setState(() => isLoading = false);
 
-      if (token != null) {
-        _showSnackBar("Login Success", color: Colors.green);
-
-        // 4. استخدام pushNamedAndRemoveUntil عشان ميرجعش لصفحة اللوج ان تاني
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          AppRoutes.home,
-              (route) => false,
-        );
+      if (user != null) {
+        _showSnackBar("Welcome Back! 🚀", color: Colors.green);
+        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
       } else {
-        _showSnackBar("Login Failed: Check your credentials");
+        _showSnackBar("Login Failed: Wrong email or password", color: Colors.red);
       }
     } catch (e) {
       if (!mounted) return;
       setState(() => isLoading = false);
-      _showSnackBar("An error occurred: $e");
+      _showSnackBar("Error: ${e.toString()}", color: Colors.red);
     }
   }
 
-  // Helper method للـ SnackBar عشان الكود يكون أنظف
   void _showSnackBar(String message, {Color? color}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
-        backgroundColor: color,
-        behavior: SnackBarBehavior.floating, // شكل أشيك
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+        backgroundColor: color ?? Colors.blueAccent,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
@@ -176,45 +67,93 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Login"),
-        centerTitle: true,
-      ),
-      // 5. استخدام SingleChildScrollView عشان الكيبورد لما تفتح ميعملش Error
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 50), // مسافة من فوق
-
-            CustomTextField(
-              hint: "Email",
-              controller: emailController,
-              keyboardType: TextInputType.emailAddress, // تحديد نوع الكيبورد
-            ),
-
-            const SizedBox(height: 15),
-
-            CustomTextField(
-              hint: "Password",
-              obscure: true,
-              controller: passwordController,
-            ),
-
-            const SizedBox(height: 30),
-
-            if (isLoading)
-              const CircularProgressIndicator()
-            else
-              SizedBox(
-                width: double.infinity, // يخلي الزرار بعرض الشاشة
-                child: CustomButton(
-                  text: "Login",
-                  onPressed: login,
+      backgroundColor: const Color(0xFF121212), // Dark Mode Theme
+      body: SafeArea(
+        child: Center( // عشان يخلي المحتوى في نص الشاشة لو الشاشة كبيرة
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 25),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.bolt_rounded, size: 80, color: Colors.blueAccent), // لوجو بسيط
+                const SizedBox(height: 20),
+                const Text(
+                  "Yalla Tech",
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
-              ),
-          ],
+                const SizedBox(height: 10),
+                const Text(
+                  "Login to access your AI tutor",
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+                const SizedBox(height: 50),
+
+                // حقل الإيميل
+                CustomTextField(
+                  hint: "Email Address",
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+
+                const SizedBox(height: 20),
+
+                // حقل الباسورد
+                CustomTextField(
+                  hint: "Password",
+                  obscure: true,
+                  controller: passwordController,
+                ),
+
+                const SizedBox(height: 10),
+
+                // زرار نسيت كلمة السر
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      // Navigator.pushNamed(context, AppRoutes.forgotPassword);
+                    },
+                    child: const Text("Forgot Password?", style: TextStyle(color: Colors.blueAccent)),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // زرار الدخول
+                if (isLoading)
+                  const CircularProgressIndicator(color: Colors.blueAccent)
+                else
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: CustomButton(
+                      text: "Login",
+                      onPressed: login,
+                    ),
+                  ),
+
+                const SizedBox(height: 30),
+
+                // ربط شاشة التسجيل
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't have an account?", style: TextStyle(color: Colors.white70)),
+                    TextButton(
+                      onPressed: () {
+                        // الآن الزرار شغال وبيروح للريجيستر 🚀
+                        Navigator.pushNamed(context, AppRoutes.register);
+                      },
+                      child: const Text(
+                          "Register Now",
+                          style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold)
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

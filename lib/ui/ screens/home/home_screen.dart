@@ -396,7 +396,7 @@ class Dashboard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
-      ),
+       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
