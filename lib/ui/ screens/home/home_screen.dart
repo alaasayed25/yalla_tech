@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:yalla_tech/routes/app_routes.dart';
+import '../../../features/summarize_lesson.dart';
 import '../../../features/tech_trends.dart';
 import '../profile/profile_screen.dart';
 import '../quiz/quiz_screen.dart';
 import '../upload_cv/upload_cv_screen.dart';
-// متنساش الامبورت ده عشان يعرف مسار صفحة الأخبار!
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,23 +18,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // قائمة الشاشات الأساسية (الـ IndexedStack)
   final List<Widget> screens = [
-    const Dashboard(),        // شاشة الاستكشاف (الرئيسية المليانة)
-    const UploadCVScreen(),   // شاشة المذاكرة (Study)
-    const QuizScreen(),       // شاشة الامتحانات (Quiz)
-    const ProfileScreen(),    // شاشة الملف الشخصي (Me)
+    const Dashboard(), // شاشة الاستكشاف (الرئيسية المليانة)
+    const UploadCVScreen(), // شاشة المذاكرة (Study)
+    const QuizScreen(), // شاشة الامتحانات (Quiz)
+    const ProfileScreen(), // شاشة الملف الشخصي (Me)
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF121212), // Dark Mode Theme
-      body: IndexedStack(
-        index: index,
-        children: screens,
-      ),
+      body: IndexedStack(index: index, children: screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05), width: 1)),
+          border: Border(
+            top: BorderSide(color: Colors.white.withOpacity(0.05), width: 1),
+          ),
         ),
         child: BottomNavigationBar(
           currentIndex: index,
@@ -53,8 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
-          // ---------------------------------
 
+          // ---------------------------------
           onTap: (value) {
             if (value == 4) {
               Navigator.of(context).pushNamed(AppRoutes.logout);
@@ -63,10 +62,22 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           },
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.dashboard_rounded), label: "Home"), // اتصلحت من hmoe لـ Home
-            BottomNavigationBarItem(icon: Icon(Icons.auto_stories), label: "Study"),
-            BottomNavigationBarItem(icon: Icon(Icons.psychology), label: "Quiz"),
-            BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: "Me"),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.dashboard_rounded),
+              label: "Home",
+            ), // اتصلحت من hmoe لـ Home
+            BottomNavigationBarItem(
+              icon: Icon(Icons.auto_stories),
+              label: "Study",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.psychology),
+              label: "Quiz",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_rounded),
+              label: "Me",
+            ),
             BottomNavigationBarItem(
               icon: Icon(Icons.logout_rounded, color: Colors.redAccent),
               label: "Logout",
@@ -90,11 +101,17 @@ class Dashboard extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF121212), // Dark Background
       appBar: AppBar(
-        title: const Text("Yalla Tech", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: const Text(
+          "Yalla Tech",
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
         actions: [
           IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.notifications_none_rounded, color: Colors.white)
+            onPressed: () {},
+            icon: const Icon(
+              Icons.notifications_none_rounded,
+              color: Colors.white,
+            ),
           ),
         ],
         backgroundColor: Colors.transparent,
@@ -115,12 +132,20 @@ class Dashboard extends StatelessWidget {
                     children: [
                       Text(
                         "أهلاً $studentName! 👋",
-                        style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: const TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       Text(
                         "عاش إنك حملت التطبيق! 🚀\nباقي 60 يوم على الامتحانات، شد حيلك!",
-                        style: TextStyle(color: Colors.grey[400], fontSize: 14, height: 1.4),
+                        style: TextStyle(
+                          color: Colors.grey[400],
+                          fontSize: 14,
+                          height: 1.4,
+                        ),
                       ),
                     ],
                   ),
@@ -128,7 +153,11 @@ class Dashboard extends StatelessWidget {
                 CircleAvatar(
                   radius: 28,
                   backgroundColor: Colors.blueAccent.withOpacity(0.1),
-                  child: const Icon(Icons.person, color: Color(0xFF2196F3), size: 30),
+                  child: const Icon(
+                    Icons.person,
+                    color: Color(0xFF2196F3),
+                    size: 30,
+                  ),
                 ),
               ],
             ),
@@ -140,7 +169,11 @@ class Dashboard extends StatelessWidget {
 
             const Text(
               "How can I help you today?",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(height: 15),
 
@@ -153,18 +186,51 @@ class Dashboard extends StatelessWidget {
               mainAxisSpacing: 15,
               childAspectRatio: 1.1,
               children: [
-                _buildFeatureCard("Summarize\nLesson", Icons.description_rounded, Colors.orangeAccent),
-                _buildFeatureCard("Mock\nExam", Icons.quiz_outlined, Colors.greenAccent),
-                _buildFeatureCard("Career\nRoadmap", Icons.alt_route_rounded, Colors.purpleAccent),
-                // --- التعديل هنا: حطينا GestureDetector عشان المربع يشتغل كزرار ---
+                // --- التعديل الجديد: ربطنا زرار التلخيص بالشاشة بتاعته ---
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const TechTrendsScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => const SummarizeLessonScreen(),
+                      ),
                     );
                   },
-                  child: _buildFeatureCard("Tech\nTrends", Icons.trending_up_rounded, Colors.blueAccent),
+                  child: _buildFeatureCard(
+                    "Summarize\nLesson",
+                    Icons.description_rounded,
+                    Colors.orangeAccent,
+                  ),
+                ),
+
+                // ----------------------------------------------------------
+                _buildFeatureCard(
+                  "Mock\nExam",
+                  Icons.quiz_outlined,
+                  Colors.greenAccent,
+                ),
+
+                _buildFeatureCard(
+                  "Career\nRoadmap",
+                  Icons.alt_route_rounded,
+                  Colors.purpleAccent,
+                ),
+
+                // --- التعديل القديم: بتاع شاشة الأخبار ---
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const TechTrendsScreen(),
+                      ),
+                    );
+                  },
+                  child: _buildFeatureCard(
+                    "Tech\nTrends",
+                    Icons.trending_up_rounded,
+                    Colors.blueAccent,
+                  ),
                 ),
                 // -------------------------------------------------------------------
               ],
@@ -192,7 +258,7 @@ class Dashboard extends StatelessWidget {
             color: Colors.blue.withOpacity(0.2),
             blurRadius: 15,
             offset: const Offset(0, 8),
-          )
+          ),
         ],
       ),
       child: Row(
@@ -203,12 +269,20 @@ class Dashboard extends StatelessWidget {
               children: [
                 Text(
                   "دليل المسار (AI)",
-                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 SizedBox(height: 8),
                 Text(
                   "حلل مهاراتك وشوف الـ AI بيقولك تدخل كلية إيه!",
-                  style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 13,
+                    height: 1.4,
+                  ),
                 ),
               ],
             ),
@@ -219,7 +293,11 @@ class Dashboard extends StatelessWidget {
               color: Colors.white24,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.bolt_rounded, color: Colors.yellow, size: 40),
+            child: const Icon(
+              Icons.bolt_rounded,
+              color: Colors.yellow,
+              size: 40,
+            ),
           ),
         ],
       ),
@@ -249,7 +327,11 @@ class Dashboard extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
