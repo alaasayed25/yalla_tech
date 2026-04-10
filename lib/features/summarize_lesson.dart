@@ -42,7 +42,7 @@ class _SummarizeLessonScreenState extends State<SummarizeLessonScreen> {
       summaryText = "جاري قراءة الملف وتلخيصه، ثواني يا بطل... 🤖⏳";
     });
 
-    try {
+    try {}  catch (e) {{
       // --- أ: قراءة النص من الـ PDF ---
       final File file = File(selectedFilePath!);
       final List<int> bytes = await file.readAsBytes();
@@ -89,7 +89,7 @@ class _SummarizeLessonScreenState extends State<SummarizeLessonScreen> {
         isSummarizing = false;
       });
 
-    } catch (e) {
+    }
       debugPrint("Gemini Error: $e"); // لطباعة الخطأ بالتفصيل في الـ Debug Console
       setState(() {
         summaryText = "حصلت مشكلة أثناء التلخيص. تأكد من جودة الإنترنت أو جرب ملفاً أصغر. ❌";
