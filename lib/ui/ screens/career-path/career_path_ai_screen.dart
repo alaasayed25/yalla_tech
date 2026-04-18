@@ -15,7 +15,7 @@ class _CareerPathAIScreenState extends State<CareerPathAIScreen> {
   bool _showResult = false;
 
   // الـ API Key بتاعك
-  final String apiKey = 'AIzaSyB8PLAm-nkBeb-ikqKaojtKguftOnPG7nU';
+  final String apiKey = 'AIzaSyD_MU2A8_-kU0YI7f4s_YB2RjbzTUWZktQ';
 
   final List<String> _userAnswers = [];
   String _realAiResponse = "";
@@ -93,16 +93,15 @@ class _CareerPathAIScreenState extends State<CareerPathAIScreen> {
     }
   }
 
-  // الدالة المعدلة بالكامل مع نظام تشخيص الأخطاء
   Future<void> _analyzeWithRealAI() async {
     setState(() => _isAnalyzing = true);
 
     try {
-      // استخدام موديل 1.5 flash لأنه أسرع وأحدث
       final model = GenerativeModel(
-        model: 'gemini-1.5-flash',
+        model: 'gemini-2.5-flash',
         apiKey: apiKey,
-      );      String prompt = '''
+      );
+      String prompt = '''
       أنت مستشار توجيه مهني. بناءً على هذه الإجابات، حلل شخصية الطالب واقترح له كليتين مناسبتين مع السبب:
       ${_userAnswers.join('\n')}
       الرد يجب أن يكون باللغة العربية، منظم، ومختصر.

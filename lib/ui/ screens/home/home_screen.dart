@@ -1,367 +1,9 @@
-// import 'package:flutter/material.dart';
-// import 'package:yalla_tech/routes/app_routes.dart';
-// import '../../../features/summarize_lesson.dart';
-// import '../../../features/tech_trends.dart';
-// import '../profile/profile_screen.dart';
-// import '../quiz/quiz_screen.dart';
-// import '../upload_cv/upload_cv_screen.dart';
-//
-// class HomeScreen extends StatefulWidget {
-//   const HomeScreen({super.key});
-//
-//   @override
-//   State<HomeScreen> createState() => _HomeScreenState();
-// }
-//
-// class _HomeScreenState extends State<HomeScreen> {
-//   int index = 0;
-//
-//   // قائمة الشاشات الأساسية (الـ IndexedStack)
-//   final List<Widget> screens = [
-//     const Dashboard(), // شاشة الاستكشاف (الرئيسية المليانة)
-//     const UploadCVScreen(), // شاشة المذاكرة (Study)
-//     const QuizScreen(), // شاشة الامتحانات (Quiz)
-//     const ProfileScreen(), // شاشة الملف الشخصي (Me)
-//   ];
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: const Color(0xFF121212), // Dark Mode Theme
-//       body: IndexedStack(index: index, children: screens),
-//       bottomNavigationBar: Container(
-//         decoration: BoxDecoration(
-//           border: Border(
-//             top: BorderSide(color: Colors.white.withOpacity(0.05), width: 1),
-//           ),
-//         ),
-//         child: BottomNavigationBar(
-//           currentIndex: index,
-//           type: BottomNavigationBarType.fixed,
-//           backgroundColor: const Color(0xFF1E1E1E),
-//           selectedItemColor: const Color(0xFF2196F3),
-//           unselectedItemColor: Colors.grey,
-//           showUnselectedLabels: true,
-//
-//           // --- حجم الخط الكبير اللي طلبته ---
-//           selectedLabelStyle: const TextStyle(
-//             fontSize: 16,
-//             fontWeight: FontWeight.bold,
-//           ),
-//           unselectedLabelStyle: const TextStyle(
-//             fontSize: 14,
-//             fontWeight: FontWeight.w500,
-//           ),
-//
-//           // ---------------------------------
-//           onTap: (value) {
-//             if (value == 4) {
-//               Navigator.of(context).pushNamed(AppRoutes.logout);
-//             } else {
-//               setState(() => index = value);
-//             }
-//           },
-//           items: const [
-//             BottomNavigationBarItem(
-//               icon: Icon(Icons.dashboard_rounded),
-//               label: "Home",
-//             ), // اتصلحت من hmoe لـ Home
-//             BottomNavigationBarItem(
-//               icon: Icon(Icons.auto_stories),
-//               label: "Study",
-//             ),
-//             BottomNavigationBarItem(
-//               icon: Icon(Icons.psychology),
-//               label: "Quiz",
-//             ),
-//             BottomNavigationBarItem(
-//               icon: Icon(Icons.person_rounded),
-//               label: "Me",
-//             ),
-//             BottomNavigationBarItem(
-//               icon: Icon(Icons.logout_rounded, color: Colors.redAccent),
-//               label: "Logout",
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-//
-// // الـ Dashboard: دي الشاشة اللي فيها كل "الخلطة السرية"
-// class Dashboard extends StatelessWidget {
-//   const Dashboard({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     // تخيل إننا بنجيب اسم الطالب من السيستم
-//     String studentName = "يا بطل";
-//
-//     return Scaffold(
-//       backgroundColor: const Color(0xFF121212), // Dark Background
-//       appBar: AppBar(
-//         title: const Text(
-//           "Yalla Tech",
-//           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-//         ),
-//         actions: [
-//           IconButton(
-//             onPressed: () {},
-//             icon: const Icon(
-//               Icons.notifications_none_rounded,
-//               color: Colors.white,
-//             ),
-//           ),
-//         ],
-//         backgroundColor: Colors.transparent,
-//         elevation: 0,
-//       ),
-//       body: SingleChildScrollView(
-//         padding: const EdgeInsets.all(20),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             // 1. الـ Header (الترحيب التحفيزي)
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//               children: [
-//                 Expanded(
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       Text(
-//                         "أهلاً $studentName! 👋",
-//                         style: const TextStyle(
-//                           fontSize: 26,
-//                           fontWeight: FontWeight.bold,
-//                           color: Colors.white,
-//                         ),
-//                       ),
-//                       const SizedBox(height: 6),
-//                       Text(
-//                         "عاش إنك حملت التطبيق! 🚀\nباقي 60 يوم على الامتحانات، شد حيلك!",
-//                         style: TextStyle(
-//                           color: Colors.grey[400],
-//                           fontSize: 14,
-//                           height: 1.4,
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//                 CircleAvatar(
-//                   radius: 28,
-//                   backgroundColor: Colors.blueAccent.withOpacity(0.1),
-//                   child: const Icon(
-//                     Icons.person,
-//                     color: Color(0xFF2196F3),
-//                     size: 30,
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             const SizedBox(height: 30),
-//
-//             // 2. كارت الـ AI الـ Hero (التلخيص السريع)
-//             _buildMainAICard(context),
-//             const SizedBox(height: 30),
-//
-//             const Text(
-//               "How can I help you today?",
-//               style: TextStyle(
-//                 fontSize: 18,
-//                 fontWeight: FontWeight.bold,
-//                 color: Colors.white,
-//               ),
-//             ),
-//             const SizedBox(height: 15),
-//
-//             // 3. الـ Grid بتاع الـ Quick Actions (4 مربعات منظمة)
-//             GridView.count(
-//               shrinkWrap: true,
-//               physics: const NeverScrollableScrollPhysics(),
-//               crossAxisCount: 2,
-//               crossAxisSpacing: 15,
-//               mainAxisSpacing: 15,
-//               childAspectRatio: 1.1,
-//               children: [
-//                 // --- التعديل الجديد: ربطنا زرار التلخيص بالشاشة بتاعته ---
-//                 GestureDetector(
-//                   onTap: () {
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(
-//                         builder: (context) => const SummarizeLessonScreen(),
-//                       ),
-//                     );
-//                   },
-//                   child: _buildFeatureCard(
-//                     "Summarize\nLesson",
-//                     Icons.description_rounded,
-//                     Colors.orangeAccent,
-//                   ),
-//                 ),
-//
-//                 // ----------------------------------------------------------
-//                 _buildFeatureCard(
-//                   "Mock\nExam",
-//                   Icons.quiz_outlined,
-//                   Colors.greenAccent,
-//                 ),
-//
-//                 _buildFeatureCard(
-//                   "Career\nRoadmap",
-//                   Icons.alt_route_rounded,
-//                   Colors.purpleAccent,
-//                 ),
-//
-//                 // --- التعديل القديم: بتاع شاشة الأخبار ---
-//                 GestureDetector(
-//                   onTap: () {
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(
-//                         builder: (context) => const TechTrendsScreen(),
-//                       ),
-//                     );
-//                   },
-//                   child: _buildFeatureCard(
-//                     "Tech\nTrends",
-//                     Icons.trending_up_rounded,
-//                     Colors.blueAccent,
-//                   ),
-//                 ),
-//                 // -------------------------------------------------------------------
-//               ],
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-//
-//   // كارت الـ AI الكبير (الـ Hero Card)
-//   Widget _buildMainAICard(BuildContext context) {
-//     return Container(
-//       width: double.infinity,
-//       padding: const EdgeInsets.all(20),
-//       decoration: BoxDecoration(
-//         gradient: const LinearGradient(
-//           colors: [Color(0xFF2196F3), Color(0xFF0D47A1)],
-//           begin: Alignment.topLeft,
-//           end: Alignment.bottomRight,
-//         ),
-//         borderRadius: BorderRadius.circular(24),
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.blue.withOpacity(0.2),
-//             blurRadius: 15,
-//             offset: const Offset(0, 8),
-//           ),
-//         ],
-//       ),
-//       child: Row(
-//         children: [
-//           const Expanded(
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Text(
-//                   "دليل المسار (AI)",
-//                   style: TextStyle(
-//                     color: Colors.white,
-//                     fontSize: 20,
-//                     fontWeight: FontWeight.bold,
-//                   ),
-//                 ),
-//                 SizedBox(height: 8),
-//                 Text(
-//                   "حلل مهاراتك وشوف الـ AI بيقولك تدخل كلية إيه!",
-//                   style: TextStyle(
-//                     color: Colors.white70,
-//                     fontSize: 13,
-//                     height: 1.4,
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//           Container(
-//             padding: const EdgeInsets.all(12),
-//             decoration: const BoxDecoration(
-//               color: Colors.white24,
-//               shape: BoxShape.circle,
-//             ),
-//             child: const Icon(
-//               Icons.bolt_rounded,
-//               color: Colors.yellow,
-//               size: 40,
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   // كروت الخدمات السريعة (الـ Quick Actions)
-//   Widget _buildFeatureCard(String title, IconData icon, Color color) {
-//     return Container(
-//       decoration: BoxDecoration(
-//         color: const Color(0xFF1E1E1E), // Dark Card
-//         borderRadius: BorderRadius.circular(24),
-//         border: Border.all(color: Colors.white.withOpacity(0.05)),
-//       ),
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           Container(
-//             padding: const EdgeInsets.all(12),
-//             decoration: BoxDecoration(
-//               color: color.withOpacity(0.1),
-//               shape: BoxShape.circle,
-//             ),
-//             child: Icon(icon, color: color, size: 28),
-//           ),
-//           const SizedBox(height: 12),
-//           Text(
-//             title,
-//             textAlign: TextAlign.center,
-//             style: const TextStyle(
-//               fontWeight: FontWeight.bold,
-//               fontSize: 14,
-//               color: Colors.white,
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-
 import 'package:flutter/material.dart';
-import 'package:yalla_tech/routes/app_routes.dart';
-import '../../../features/summarize_lesson.dart';
-import '../../../features/tech_trends.dart';
-import '../../../features/career_path_ai_screen.dart'; // السطر ده اتضاف عشان يقرا الشاشة الجديدة
+import 'package:google_generative_ai/google_generative_ai.dart';
 import '../profile/profile_screen.dart';
-import '../quiz/quiz_screen.dart';
-import '../upload_cv/upload_cv_screen.dart';
-
-// --- شاشات مؤقتة عشان الكود يشتغل بدون Errors لحد ما تصممهم ---
-class MockExamScreen extends StatelessWidget {
-  const MockExamScreen({super.key});
-  @override
-  Widget build(BuildContext context) => const Scaffold(backgroundColor: Color(0xFF121212), body: Center(child: Text('Mock Exam Screen', style: TextStyle(color: Colors.white))));
-}
-
-class CareerRoadmapScreen extends StatelessWidget {
-  const CareerRoadmapScreen({super.key});
-  @override
-  Widget build(BuildContext context) => const Scaffold(backgroundColor: Color(0xFF121212), body: Center(child: Text('Career Roadmap Screen', style: TextStyle(color: Colors.white))));
-}
-// ---------------------------------------------------------------
+import '../recommendations/recommendations_screen.dart';
+import '../roadmap/roadmap_screen.dart';
+import '../ai_chat/ai_chat_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -373,72 +15,31 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int index = 0;
 
-  // قائمة الشاشات الأساسية (الـ IndexedStack)
   final List<Widget> screens = [
-    const Dashboard(), // شاشة الاستكشاف (الرئيسية المليانة)
-    const UploadCVScreen(), // شاشة المذاكرة (Study)
-    const QuizScreen(), // شاشة الامتحانات (Quiz)
-    const ProfileScreen(), // شاشة الملف الشخصي (Me)
+    const Dashboard(),
+    const CareerRoadmapScreen(careerPathName: 'My Path', steps: []),
+    const AiChatScreen(),
+    const ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212), // Dark Mode Theme
+      backgroundColor: const Color(0xFF0D1B2A),
       body: IndexedStack(index: index, children: screens),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: Colors.white.withOpacity(0.05), width: 1),
-          ),
-        ),
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(canvasColor: const Color(0xFF030A12)),
         child: BottomNavigationBar(
           currentIndex: index,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: const Color(0xFF1E1E1E),
-          selectedItemColor: const Color(0xFF2196F3),
-          unselectedItemColor: Colors.grey,
-          showUnselectedLabels: true,
-
-          // --- كبرنا حجم الخط هنا زي ما طلبت ---
-          selectedLabelStyle: const TextStyle(
-            fontSize: 18, // كانت 16 وبقت 18
-            fontWeight: FontWeight.bold,
-          ),
-          unselectedLabelStyle: const TextStyle(
-            fontSize: 16, // كانت 14 وبقت 16
-            fontWeight: FontWeight.w500,
-          ),
-          // ---------------------------------
-
-          onTap: (value) {
-            if (value == 4) {
-              Navigator.of(context).pushNamed(AppRoutes.logout);
-            } else {
-              setState(() => index = value);
-            }
-          },
+          selectedItemColor: const Color(0xFF00E5FF),
+          unselectedItemColor: const Color(0xFFB0BEC5),
+          onTap: (val) => setState(() => index = val),
           items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard_rounded),
-              label: "Home",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.auto_stories),
-              label: "Study",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.psychology),
-              label: "Quiz",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_rounded),
-              label: "Me",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.logout_rounded, color: Colors.redAccent),
-              label: "Logout",
-            ),
+            BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "Home"),
+            BottomNavigationBarItem(icon: Icon(Icons.alt_route), label: "My Path"),
+            BottomNavigationBarItem(icon: Icon(Icons.smart_toy_outlined), label: "AI Tutor"),
+            BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: "Profile"),
           ],
         ),
       ),
@@ -446,277 +47,265 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// الـ Dashboard: دي الشاشة اللي فيها كل "الخلطة السرية"
-class Dashboard extends StatelessWidget {
+class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
 
   @override
+  State<Dashboard> createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> {
+  final Color bgColor = const Color(0xFF0D1B2A);
+  final Color blockColor = const Color(0xFF1B263B);
+  final Color primaryCyan = const Color(0xFF00E5FF);
+
+  bool _isLoadingPicks = true;
+  List<String> _dailyPicks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchDailyPicks(); // أول ما الشاشة تفتح، نجيب الأسئلة
+  }
+
+  Future<void> _fetchDailyPicks() async {
+    setState(() {
+      _isLoadingPicks = true; // بنظهر اللودينج كل ما بنحدث الأسئلة
+    });
+
+    try {
+      // ⚠️ يفضل تغيير هذا المفتاح لاحقاً لأسباب أمنية
+      const apiKey = 'AIzaSyD_MU2A8_-kU0YI7f4s_YB2RjbzTUWZktQ';
+      final model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
+
+      // الـ Prompt الجديد: يركز على طالب مدرسة وأساسيات التكنولوجيا
+      final prompt = "Generate 3 very short, basic technology questions for a middle school student. "
+          "Focus on basics like (What is RAM, What is Software, How does a router work, What is an IP address, etc.). "
+          "The questions must be simple and easy to understand. "
+          "Return ONLY the 3 questions separated by '|' without any numbering or extra text.";
+
+      final content = [Content.text(prompt)];
+      final response = await model.generateContent(content);
+
+      if (response.text != null) {
+        final questions = response.text!.split('|').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+
+        setState(() {
+          _dailyPicks = questions.take(3).toList();
+          _isLoadingPicks = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        // أسئلة افتراضية في حال حدوث خطأ أو انقطاع النت
+        _dailyPicks = ["What is Hardware?", "What is an IP?", "What is Software?"];
+        _isLoadingPicks = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // تخيل إننا بنجيب اسم الطالب من السيستم
-    String studentName = "يا بطل";
-
     return Scaffold(
-      backgroundColor: const Color(0xFF121212), // Dark Background
-      appBar: AppBar(
-        title: const Text(
-          "Yalla Tech",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.notifications_none_rounded,
-              color: Colors.white,
-            ),
-          ),
-        ],
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 1. الـ Header (الترحيب التحفيزي)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: bgColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 1. الهيدر
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("Hello, Ahmad", style: TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold)),
+                  Row(
                     children: [
-                      Text(
-                        "أهلاً $studentName! 👋",
-                        style: const TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(color: Colors.orange.withOpacity(0.15), borderRadius: BorderRadius.circular(12)),
+                        child: const Row(
+                          children: [
+                            Text("🔥 3", style: TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold, fontSize: 14)),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        "يوم جديد، فرصة جديدة للنجاح 💪\nيلا بينا نشوف هنتعلم إيه النهاردة في عالم الـ Tech   ",
-                        style: TextStyle(
-                          color: Colors.grey[400],
-                          fontSize: 20,
-                          height: 1.4,
-                        ),
-                      ),
+                      const SizedBox(width: 12),
+                      Icon(Icons.notifications_none_rounded, color: Colors.white.withOpacity(0.8), size: 28),
                     ],
-                  ),
-                ),
-                CircleAvatar(
-                  radius: 28,
-                  backgroundColor: Colors.blueAccent.withOpacity(0.1),
-                  child: const Icon(
-                    Icons.person,
-                    color: Color(0xFF2196F3),
-                    size: 30,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 30),
-
-            // 2. كارت الـ AI الـ Hero (التلخيص السريع) - هنا التعديل الجديد
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CareerPathAIScreen(),
-                  ),
-                );
-              },
-              child: _buildMainAICard(context),
-            ),
-            const SizedBox(height: 30),
-
-            const Text(
-              "How can I help you today?",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+                  )
+                ],
               ),
-            ),
-            const SizedBox(height: 15),
+              const SizedBox(height: 24),
 
-            // 3. الـ Grid بتاع الـ Quick Actions (4 مربعات منظمة)
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              crossAxisSpacing: 15,
-              mainAxisSpacing: 15,
-              childAspectRatio: 1.1,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SummarizeLessonScreen(),
-                      ),
-                    );
-                  },
-                  child: _buildFeatureCard(
-                    "Summarize\nLesson",
-                    Icons.description_rounded,
-                    Colors.orangeAccent,
-                  ),
-                ),
+              // 2. اقتراحات الذكاء الاصطناعي (Daily Picks)
+              _buildAIDailyPicks(context),
+              const SizedBox(height: 24),
 
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MockExamScreen(),
-                      ),
-                    );
-                  },
-                  child: _buildFeatureCard(
-                    "Mock\nExam",
-                    Icons.quiz_outlined,
-                    Colors.greenAccent,
-                  ),
-                ),
+              // 3. مستطيل عريض: الشات مع الذكاء الاصطناعي
+              _buildWideRectangle(
+                context: context,
+                title: "Chat with AI Tutor",
+                subtitle: "Ask questions & get instant help",
+                icon: Icons.smart_toy,
+                color: primaryCyan,
+                targetScreen: const AiChatScreen(),
+              ),
+              const SizedBox(height: 16),
 
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CareerRoadmapScreen(),
-                      ),
-                    );
-                  },
-                  child: _buildFeatureCard(
-                    "Career\nRoadmap",
-                    Icons.alt_route_rounded,
-                    Colors.purpleAccent,
-                  ),
-                ),
+              // 4. مستطيل عريض: منهج المدرسة
+              _buildWideRectangle(
+                context: context,
+                title: "School Curriculum (ICT)",
+                subtitle: "Prep & High School lessons",
+                icon: Icons.menu_book_rounded,
+                color: Colors.orangeAccent,
+                targetScreen: const Scaffold(body: Center(child: Text("ICT Screen", style: TextStyle(color: Colors.white)))),
+              ),
+              const SizedBox(height: 16),
 
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const TechTrendsScreen(),
-                      ),
-                    );
-                  },
-                  child: _buildFeatureCard(
-                    "Tech\nTrends",
-                    Icons.trending_up_rounded,
-                    Colors.blueAccent,
+              // 5. مستطيل عريض: مكتبتي
+              _buildWideRectangle(
+                context: context,
+                title: "My AI Library",
+                subtitle: "Your saved notes & explanations",
+                icon: Icons.auto_stories,
+                color: Colors.lightGreenAccent,
+                targetScreen: const Scaffold(body: Center(child: Text("Saved Notes Screen", style: TextStyle(color: Colors.white)))),
+              ),
+              const SizedBox(height: 16),
+
+              // 6. مربعات جنب بعض
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildSquareBlock(
+                      context: context,
+                      title: "Tech Fields\nVideos",
+                      icon: Icons.play_circle_fill,
+                      color: Colors.greenAccent,
+                      targetScreen: const Scaffold(body: Center(child: Text("Videos Screen", style: TextStyle(color: Colors.white)))),
+                    ),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildSquareBlock(
+                      context: context,
+                      title: "AI Career\nTest",
+                      icon: Icons.psychology,
+                      color: Colors.purpleAccent,
+                      targetScreen: const RecommendationScreen(),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // 7. مستطيل عريض: استكمال المسار الحالي
+              _buildWideRectangle(
+                context: context,
+                title: "My Active Roadmap",
+                subtitle: "Continue: Web Development",
+                icon: Icons.route,
+                color: Colors.pinkAccent,
+                targetScreen: const CareerRoadmapScreen(careerPathName: 'Web Dev', steps: []),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // === ويدجت اقتراحات اليوم (Daily Picks) ===
+  Widget _buildAIDailyPicks(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("AI Suggested for you:", style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w500)),
+        const SizedBox(height: 12),
+        _isLoadingPicks
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            // بنبعت السؤال صافي من غير إيموجي للدالة اللي تحت
+            children: _dailyPicks.map((q) => _buildPickChip(context, q)).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPickChip(BuildContext context, String questionText) {
+    return InkWell(
+      onTap: () async {
+        // استخدام await هنا هيوقف الكود لحد ما الطالب يقفل شاشة الشات ويرجع للهوم
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AiChatScreen(initialMessage: questionText),
+          ),
+        );
+
+        // أول ما يرجع للهوم، الدالة دي هتتنفذ وتجيب أسئلة جديدة أوتوماتيك
+        _fetchDailyPicks();
+      },
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        margin: const EdgeInsets.only(right: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: blockColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: primaryCyan.withOpacity(0.3)),
+        ),
+        // اللمبة بتتحط هنا في الديزاين بس، ومش بتتبعت للشات
+        child: Text("💡 $questionText", style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 13, fontWeight: FontWeight.w600)),
+      ),
+    );
+  }
+
+  // === ويدجت المستطيل العريض (Rectangles) ===
+  Widget _buildWideRectangle({required BuildContext context, required String title, required String subtitle, required IconData icon, required Color color, required Widget targetScreen}) {
+    return InkWell(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => targetScreen)),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(color: blockColor, borderRadius: BorderRadius.circular(16)),
+        child: Row(
+          children: [
+            Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: color.withOpacity(0.15), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: color, size: 32)),
+            const SizedBox(width: 16),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)), const SizedBox(height: 4), Text(subtitle, style: const TextStyle(color: Colors.white54, fontSize: 13))])),
+            const Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 16),
           ],
         ),
       ),
     );
   }
 
-  // كارت الـ AI الكبير (الـ Hero Card)
-  Widget _buildMainAICard(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF2196F3), Color(0xFF0D47A1)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+  // === ويدجت المربع (Squares) ===
+  Widget _buildSquareBlock({required BuildContext context, required String title, required IconData icon, required Color color, required Widget targetScreen}) {
+    return InkWell(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => targetScreen)),
+      borderRadius: BorderRadius.circular(16),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(color: blockColor, borderRadius: BorderRadius.circular(16)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: color, size: 40),
+              const SizedBox(height: 16),
+              Text(title, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+            ],
+          ),
         ),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.blue.withOpacity(0.2),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "دليل المسار (AI)",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  "حلل مهاراتك وشوف الـ AI بيقولك تدخل كلية إيه!",
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 13,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: const BoxDecoration(
-              color: Colors.white24,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.bolt_rounded,
-              color: Colors.yellow,
-              size: 40,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // كروت الخدمات السريعة (الـ Quick Actions)
-  Widget _buildFeatureCard(String title, IconData icon, Color color) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E), // Dark Card
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 28),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              color: Colors.white,
-            ),
-          ),
-        ],
       ),
     );
   }

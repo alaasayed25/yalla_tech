@@ -29,3 +29,4 @@ class AppRoutes {
     intro: (context) => const IntroScreen(),
   };
 }
+
