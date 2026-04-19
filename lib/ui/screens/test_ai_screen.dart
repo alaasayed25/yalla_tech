@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import '../../services/gemini_service.dart';
 
 class TestAIScreen extends StatefulWidget {
   const TestAIScreen({super.key});
@@ -21,26 +21,15 @@ class _TestAIScreenState extends State<TestAIScreen> {
     });
 
     try {
-      // 1. هنسحب المفتاح بتاعك من الملف المخفي (.env)
-      final String myApiKey = dotenv.env['GEMINI_API_KEY']!;
+      const prompt =
+          'أنا طالب في هندسة برمجيات مبتدئ، قولي إيه هي أهم 5 أدوات أو تقنيات لازم أتعلمهم، واكتبلي سطر واحد شرح لكل أداة بالعربي.';
 
-      // 2. هنباصي المفتاح واسم الموديل مباشرة للمكتبة
-      final model = GenerativeModel(
-        model: 'gemini-2.5-flash', // اسم الموديل ثابت هنا
-        apiKey: myApiKey,
-      );
-      // الرسالة اللي هنبعتها للـ AI
-      const prompt = 'أنا طالب في هندسة برمجيات مبتدئ، قولي إيه هي أهم 5 أدوات أو تقنيات لازم أتعلمهم، واكتبلي سطر واحد شرح لكل أداة بالعربي.';      final content = [Content.text(prompt)];
-
-      // بنستنى الرد
-      final response = await model.generateContent(content);
+      final text = await GeminiService.generate(prompt);
 
       setState(() {
-        // بنعرض الرد اللي رجع
-        aiResponse = response.text ?? "الذكاء الاصطناعي ماردش بحاجة!";
+        aiResponse = text;
         isLoading = false;
       });
-
     } catch (e) {
       setState(() {
         aiResponse = "حصلت مشكلة: $e ❌\nاتأكد من الـ API Key أو النت.";

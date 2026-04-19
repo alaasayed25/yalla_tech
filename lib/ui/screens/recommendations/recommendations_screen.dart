@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
+
+import '../../../services/gemini_service.dart';
 
 class RecommendationScreen extends StatefulWidget {
   const RecommendationScreen({super.key});
@@ -70,30 +71,26 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
     });
 
     try {
-      // ⚠️ حط الـ API Key بتاعك هنا
-      const apiKey = 'AIzaSyD_MU2A8_-kU0YI7f4s_YB2RjbzTUWZktQ';
-      final model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
-
-      // بنجمع الإجابات في رسالة واحدة للـ AI
-      String prompt = '''
+      final prompt = '''
       أنا طالب مبتدئ وعايز أعرف التراك البرمجي المناسب ليا. دي إجاباتي على 3 أسئلة:
       1. الإجابة الأولى: ${_userAnswers[0]}
       2. الإجابة التانية: ${_userAnswers[1]}
       3. الإجابة التالتة: ${_userAnswers[2]}
-      
+
       بناءً على الإجابات دي، اقترح لي تراك برمجي واحد بس (مثلاً: Frontend أو Backend أو AI أو Mobile).
       اكتب اسم التراك بشكل واضح، وبعدها اكتب سطرين بس باللغة العربية تشرحلي فيهم ليه التراك ده مناسب ليا.
       ''';
 
-      final response = await model.generateContent([Content.text(prompt)]);
+      final text = await GeminiService.generate(prompt);
 
       setState(() {
-        _aiResult = response.text ?? "مقدرتش أحدد مسار للأسف.";
+        _aiResult = text;
         _isLoading = false;
       });
     } catch (e) {
+      debugPrint("Recommendation error: $e");
       setState(() {
-        _aiResult = "حصلت مشكلة في الاتصال: $e";
+        _aiResult = "حصلت مشكلة في الاتصال.";
         _isLoading = false;
       });
     }

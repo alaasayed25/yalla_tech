@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
 import 'dart:convert';
+
+import '../../../services/gemini_service.dart';
 
 class CareerPathAIScreen extends StatefulWidget {
   const CareerPathAIScreen({super.key});
@@ -36,12 +36,6 @@ class _CareerPathAIScreenState extends State<CareerPathAIScreen> {
     });
 
     try {
-      final apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
-      final model = GenerativeModel(
-        model: 'gemini-2.5-flash',
-        apiKey: apiKey,
-      );
-
       final prompt = '''
     أنشئ 10 أسئلة مختلفة تماما في مجال التكنولوجيا لتحديد ميول الطالب.
     كل سؤال يكون اختيار من متعدد.
@@ -52,15 +46,12 @@ class _CareerPathAIScreenState extends State<CareerPathAIScreen> {
     ]
     ''';
 
-      final response =
-      await model.generateContent([Content.text(prompt)]);
+      final text = await GeminiService.generate(
+        prompt,
+        cacheKey: 'career_path_questions_v1',
+        cacheTtl: const Duration(days: 7),
+      );
 
-      print("RAW RESPONSE:");
-      print(response.text);
-
-      String text = response.text ?? "";
-
-      // 🔥 أهم جزء: تنظيف الرد
       final start = text.indexOf('[');
       final end = text.lastIndexOf(']');
 
@@ -69,10 +60,7 @@ class _CareerPathAIScreenState extends State<CareerPathAIScreen> {
       }
 
       final jsonString = text.substring(start, end + 1);
-
       final data = json.decode(jsonString);
-
-      print("PARSED LENGTH: ${data.length}");
 
       setState(() {
         _dynamicQuestions = List<Map<String, dynamic>>.from(data);
@@ -81,9 +69,7 @@ class _CareerPathAIScreenState extends State<CareerPathAIScreen> {
         _isLoadingQuestions = false;
       });
     } catch (e) {
-      print("ERROR: $e");
-
-      // 🔥 fallback (عشان تتأكد UI شغال)
+      debugPrint("ERROR: $e");
       setState(() {
         _dynamicQuestions = [
           {
@@ -105,20 +91,16 @@ class _CareerPathAIScreenState extends State<CareerPathAIScreen> {
   Future<void> _analyzeWithRealAI() async {
     setState(() => _isAnalyzing = true);
     try {
-      final apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
-      final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
-
       final prompt =
           "حلل هذه الإجابات واقترح تخصص تكنولوجي مناسب للطالب: ${_userAnswers.join('\n')}";
-      final response = await model.generateContent([Content.text(prompt)]);
-      print("AI RESPONSE:");
-      print(response.text);
+      final text = await GeminiService.generate(prompt);
       setState(() {
-        _realAiResponse = response.text ?? "التحليل غير متاح.";
+        _realAiResponse = text;
         _isAnalyzing = false;
         _showResult = true;
       });
     } catch (e) {
+      debugPrint("AI analysis error: $e");
       setState(() {
         _isAnalyzing = false;
         _showResult = true;

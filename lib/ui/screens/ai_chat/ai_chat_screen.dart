@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
+
+import '../../../services/gemini_service.dart';
 
 class AiChatScreen extends StatefulWidget {
   final String? initialMessage;
@@ -31,13 +31,11 @@ class _AiChatScreenState extends State<AiChatScreen> {
     super.initState();
     if (widget.initialMessage != null && widget.initialMessage!.isNotEmpty) {
       _messageController.text = widget.initialMessage!;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _sendMessage();
-      });
     }
   }
 
   Future<void> _sendMessage() async {
+    if (_isLoading) return;
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
 
@@ -48,52 +46,38 @@ class _AiChatScreenState extends State<AiChatScreen> {
     _messageController.clear();
 
     try {
-      // سحب المفتاح من ملف الـ .env
-      final String? myApiKey = dotenv.env['GEMINI_API_KEY'];
-
-      if (myApiKey == null || myApiKey.isEmpty) {
-        throw Exception("API Key not found in .env");
-      }
-
-      print("ENV TEST => ${dotenv.env}"); // للـ Debugging
-
-      // تهيئة الموديل
-      final model = GenerativeModel(
-        model: 'gemini-2.5-flash-latest',
-        apiKey: myApiKey,
-      );
-
       final prompt = '''
 أنت معلم ذكي لمساعدة الطلاب.
 أجب باللغة العربية فقط وبشكل مختصر وواضح.
 
 السؤال: $text
 ''';
-      final content = [Content.text(prompt)];
 
-      // إرسال الطلب
-      final response = await model.generateContent(content).timeout(
-        const Duration(seconds: 20),
+      final responseText = await GeminiService.generate(
+        prompt,
+        maxInputChars: 4000,
       );
+
       setState(() {
         _messages.add({
           "isUser": false,
-          "text": response.text?.replaceAll('*', '') ?? "عذراً، حدث خطأ في الرد."
+          "text": responseText.replaceAll('*', ''),
         });
       });
-
     } catch (e) {
-      print("Error: $e");
+      debugPrint("Chat error: $e");
       setState(() {
         _messages.add({
           "isUser": false,
-          "text": "عذراً، يرجى التأكد من اتصالك بالإنترنت. (تفاصيل الخطأ: $e)"
+          "text": "عذراً، يرجى المحاولة مرة أخرى لاحقاً.",
         });
       });
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 

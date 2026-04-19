@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
+import '../../../services/gemini_service.dart';
 import '../profile/profile_screen.dart';
 import '../recommendations/recommendations_screen.dart';
 import '../roadmap/roadmap_screen.dart';
 import '../ai_chat/ai_chat_screen.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../summarize/summarize_lesson.dart';
 class HomeScreen extends StatefulWidget {
@@ -62,33 +61,33 @@ class _DashboardState extends State<Dashboard> {
   }
   Future<void> _fetchDailyPicks() async {
     setState(() {
-      _isLoadingPicks = true; // بنظهر اللودينج كل ما بنحدث الأسئلة
+      _isLoadingPicks = true;
     });
     try {
-// السطر ده هيسحب المفتاح من الملف المخفي بأمان تام
-      final String myApiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
-      final model = GenerativeModel(
-        model: 'ggemini-pro', // اسم الموديل
-        apiKey: myApiKey,
-      );
-      // الـ Prompt الجديد: يركز على طالب مدرسة وأساسيات التكنولوجيا
+      final today = DateTime.now().toIso8601String().substring(0, 10);
       final prompt = "Generate 3 very short, basic technology questions for a middle school student. "
           "Focus on basics like (What is RAM, What is Software, How does a router work, What is an IP address, etc.). "
           "The questions must be simple and easy to understand. "
           "Return ONLY the 3 questions separated by '|' without any numbering or extra text.";
-      final content = [Content.text(prompt)];
-      final response = await model.generateContent(content);
-      if (response.text != null) {
-        final questions = response.text!.split('|').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
-        setState(() {
-          _dailyPicks = questions.take(3).toList();
-          _isLoadingPicks = false;
-        });
-      }
-    } catch (e) {
-      print("Error fetching picks: $e"); // عشان لو في مشكلة تظهر في الكونسول
+
+      final text = await GeminiService.generate(
+        prompt,
+        cacheKey: 'home_daily_picks_$today',
+        cacheTtl: const Duration(hours: 24),
+      );
+
+      final questions = text
+          .split('|')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
       setState(() {
-        // أسئلة افتراضية في حال حدوث خطأ أو انقطاع النت
+        _dailyPicks = questions.take(3).toList();
+        _isLoadingPicks = false;
+      });
+    } catch (e) {
+      debugPrint("Error fetching picks: $e");
+      setState(() {
         _dailyPicks = ["What is Hardware?", "What is an IP?", "What is Software?"];
         _isLoadingPicks = false;
       });
@@ -230,17 +229,13 @@ class _DashboardState extends State<Dashboard> {
 
   Widget _buildPickChip(BuildContext context, String questionText) {
     return InkWell(
-      onTap: () async {
-        // استخدام await هنا هيوقف الكود لحد ما الطالب يقفل شاشة الشات ويرجع للهوم
-        await Navigator.push(
+      onTap: () {
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => AiChatScreen(initialMessage: questionText),
           ),
         );
-
-        // أول ما يرجع للهوم، الدالة دي هتتنفذ وتجيب أسئلة جديدة أوتوماتيك
-        _fetchDailyPicks();
       },
       borderRadius: BorderRadius.circular(20),
       child: Container(

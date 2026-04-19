@@ -1,10 +1,9 @@
 import 'dart:io';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
+
+import '../../../services/gemini_service.dart';
 
 class SummarizeLessonScreen extends StatefulWidget {
   const SummarizeLessonScreen({super.key});
@@ -62,36 +61,30 @@ class _SummarizeLessonScreenState extends State<SummarizeLessonScreen> {
         return;
       }
 
-      // سحب المفتاح من ملف الـ .env
-      final String myApiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
-
-      if (myApiKey.isEmpty) {
+      const int maxPdfChars = 30000;
+      if (extractedContent.length > maxPdfChars) {
         setState(() {
-          summaryText = "مفيش أي API Key موجود في ملف الـ .env ❌";
+          summaryText =
+              "الملف كبير جداً (أكثر من $maxPdfChars حرف). من فضلك ارفع ملفاً أقصر.";
           isSummarizing = false;
         });
         return;
       }
 
-      // برومبت ذكي يطلب التلخيص والـ Chips في رد واحد
       final prompt = '''
       أنت معلم خبير. بناءً على النص التالي:
       1. لخص الدرس في نقاط بسيطة ومنظمة.
       2. استخرج أهم 5 مصطلحات تكنولوجية أو مفاهيم أساسية وردت في النص وضعها في سطر واحد مفصولة بـ علامة "|".
-      
+
       ابدأ الرد بالتلخيص، ثم ضع في النهاية السطر التالي تماماً: "CHIPS:" متبوعاً بالمصطلحات.
-      
+
       النص: $extractedContent
       ''';
 
-      // تهيئة الموديل
-      final model = GenerativeModel(
-        model: 'gemini-2.5-flash',
-        apiKey: myApiKey,
+      final fullText = await GeminiService.generate(
+        prompt,
+        maxInputChars: maxPdfChars + 2000,
       );
-
-      final response = await model.generateContent([Content.text(prompt)]);
-      String fullText = response.text ?? "";
 
       // فصل الـ Chips عن النص
       if (fullText.contains("CHIPS:")) {
