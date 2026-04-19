@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class TestAIScreen extends StatefulWidget {
   const TestAIScreen({super.key});
@@ -20,15 +21,14 @@ class _TestAIScreenState extends State<TestAIScreen> {
     });
 
     try {
-      // ⚠️ حط مفتاح الـ API بتاعك هنا بين علامات التنصيص
-      const apiKey = 'AIzaSyD_MU2A8_-kU0YI7f4s_YB2RjbzTUWZktQ';
+      // 1. هنسحب المفتاح بتاعك من الملف المخفي (.env)
+      final String myApiKey = dotenv.env['GEMINI_API_KEY']!;
 
-      // بنحدد الموديل اللي هنستخدمه (flash سريع وممتاز للتجربة)
+      // 2. هنباصي المفتاح واسم الموديل مباشرة للمكتبة
       final model = GenerativeModel(
-        model: 'gemini-2.5-flash',
-        apiKey: apiKey,
+        model: 'gemini-2.5-flash', // اسم الموديل ثابت هنا
+        apiKey: myApiKey,
       );
-
       // الرسالة اللي هنبعتها للـ AI
       const prompt = 'أنا طالب في هندسة برمجيات مبتدئ، قولي إيه هي أهم 5 أدوات أو تقنيات لازم أتعلمهم، واكتبلي سطر واحد شرح لكل أداة بالعربي.';      final content = [Content.text(prompt)];
 

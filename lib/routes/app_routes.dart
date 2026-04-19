@@ -1,12 +1,12 @@
 
 import 'package:flutter/material.dart';
-import '../ui/ screens/auth/auth_gate_screen.dart';
-import '../ui/ screens/auth/login_screen.dart';
-import '../ui/ screens/auth/register_screen.dart';
-import '../ui/ screens/home/home_screen.dart';
-import '../ui/ screens/intro/intro_screen.dart';
-import '../ui/ screens/profile/logout_screen.dart';
-import '../ui/ screens/splash/splash_screen.dart';
+import '../ui/screens/auth/auth_gate_screen.dart';
+import '../ui/screens/auth/login_screen.dart';
+import '../ui/screens/auth/register_screen.dart';
+import '../ui/screens/home/home_screen.dart';
+import '../ui/screens/intro/intro_screen.dart';
+import '../ui/screens/profile/logout_screen.dart';
+import '../ui/screens/splash/splash_screen.dart';
 
 class AppRoutes {
   static const String splash = "/";

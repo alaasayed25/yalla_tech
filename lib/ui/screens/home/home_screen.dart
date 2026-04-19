@@ -4,24 +4,22 @@ import '../profile/profile_screen.dart';
 import '../recommendations/recommendations_screen.dart';
 import '../roadmap/roadmap_screen.dart';
 import '../ai_chat/ai_chat_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../summarize/summarize_lesson.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
-
 class _HomeScreenState extends State<HomeScreen> {
   int index = 0;
-
   final List<Widget> screens = [
     const Dashboard(),
     const CareerRoadmapScreen(careerPathName: 'My Path', steps: []),
     const AiChatScreen(),
     const ProfileScreen(),
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,56 +44,49 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
-
   @override
   State<Dashboard> createState() => _DashboardState();
 }
-
 class _DashboardState extends State<Dashboard> {
   final Color bgColor = const Color(0xFF0D1B2A);
   final Color blockColor = const Color(0xFF1B263B);
   final Color primaryCyan = const Color(0xFF00E5FF);
-
   bool _isLoadingPicks = true;
   List<String> _dailyPicks = [];
-
   @override
   void initState() {
     super.initState();
     _fetchDailyPicks(); // أول ما الشاشة تفتح، نجيب الأسئلة
   }
-
   Future<void> _fetchDailyPicks() async {
     setState(() {
       _isLoadingPicks = true; // بنظهر اللودينج كل ما بنحدث الأسئلة
     });
-
     try {
-      // ⚠️ يفضل تغيير هذا المفتاح لاحقاً لأسباب أمنية
-      const apiKey = 'AIzaSyD_MU2A8_-kU0YI7f4s_YB2RjbzTUWZktQ';
-      final model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
-
+// السطر ده هيسحب المفتاح من الملف المخفي بأمان تام
+      final String myApiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
+      final model = GenerativeModel(
+        model: 'ggemini-pro', // اسم الموديل
+        apiKey: myApiKey,
+      );
       // الـ Prompt الجديد: يركز على طالب مدرسة وأساسيات التكنولوجيا
       final prompt = "Generate 3 very short, basic technology questions for a middle school student. "
           "Focus on basics like (What is RAM, What is Software, How does a router work, What is an IP address, etc.). "
           "The questions must be simple and easy to understand. "
           "Return ONLY the 3 questions separated by '|' without any numbering or extra text.";
-
       final content = [Content.text(prompt)];
       final response = await model.generateContent(content);
-
       if (response.text != null) {
         final questions = response.text!.split('|').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
-
         setState(() {
           _dailyPicks = questions.take(3).toList();
           _isLoadingPicks = false;
         });
       }
     } catch (e) {
+      print("Error fetching picks: $e"); // عشان لو في مشكلة تظهر في الكونسول
       setState(() {
         // أسئلة افتراضية في حال حدوث خطأ أو انقطاع النت
         _dailyPicks = ["What is Hardware?", "What is an IP?", "What is Software?"];
@@ -156,11 +147,11 @@ class _DashboardState extends State<Dashboard> {
               // 4. مستطيل عريض: منهج المدرسة
               _buildWideRectangle(
                 context: context,
-                title: "School Curriculum (ICT)",
-                subtitle: "Prep & High School lessons",
+                title: "Summarize Lesson (ICT)",
+                subtitle: "Summarize & Quiz your PDF", // غيرنا الوصف عشان يكون أدق
                 icon: Icons.menu_book_rounded,
                 color: Colors.orangeAccent,
-                targetScreen: const Scaffold(body: Center(child: Text("ICT Screen", style: TextStyle(color: Colors.white)))),
+                targetScreen: const SummarizeLessonScreen(), // 👈 هنا الربط السليم
               ),
               const SizedBox(height: 16),
 

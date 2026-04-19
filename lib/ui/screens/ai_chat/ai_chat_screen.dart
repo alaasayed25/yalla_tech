@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 class AiChatScreen extends StatefulWidget {
@@ -25,7 +26,6 @@ class _AiChatScreenState extends State<AiChatScreen> {
     },
   ];
 
-  // التعديل هنا: الدالة دي بتشتغل أول ما الشاشة تفتح عشان تبعت السؤال أوتوماتيك
   @override
   void initState() {
     super.initState();
@@ -46,25 +46,49 @@ class _AiChatScreenState extends State<AiChatScreen> {
       _isLoading = true;
     });
     _messageController.clear();
+
     try {
-      const apiKey = 'AIzaSyD_MU2A8_-kU0YI7f4s_YB2RjbzTUWZktQ';
+      // سحب المفتاح من ملف الـ .env
+      final String? myApiKey = dotenv.env['GEMINI_API_KEY'];
 
-      final model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
+      if (myApiKey == null || myApiKey.isEmpty) {
+        throw Exception("API Key not found in .env");
+      }
 
-      final prompt = "أجب دائماً باللغة العربية، وبطريقة مبسطة ولطيفة تناسب طالب مدرسة: $text";
+      print("ENV TEST => ${dotenv.env}"); // للـ Debugging
+
+      // تهيئة الموديل
+      final model = GenerativeModel(
+        model: 'gemini-2.5-flash-latest',
+        apiKey: myApiKey,
+      );
+
+      final prompt = '''
+أنت معلم ذكي لمساعدة الطلاب.
+أجب باللغة العربية فقط وبشكل مختصر وواضح.
+
+السؤال: $text
+''';
       final content = [Content.text(prompt)];
 
-      final response = await model.generateContent(content);
-
+      // إرسال الطلب
+      final response = await model.generateContent(content).timeout(
+        const Duration(seconds: 20),
+      );
       setState(() {
         _messages.add({
           "isUser": false,
           "text": response.text?.replaceAll('*', '') ?? "عذراً، حدث خطأ في الرد."
         });
       });
+
     } catch (e) {
+      print("Error: $e");
       setState(() {
-        _messages.add({"isUser": false, "text": "عذراً، يرجى التأكد من اتصالك بالإنترنت أو صلاحية مفتاح الـ API."});
+        _messages.add({
+          "isUser": false,
+          "text": "عذراً، يرجى التأكد من اتصالك بالإنترنت. (تفاصيل الخطأ: $e)"
+        });
       });
     } finally {
       setState(() {
@@ -239,7 +263,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
             ),
             const SizedBox(width: 12),
             GestureDetector(
-              onTap: _sendMessage,
+              onTap: _isLoading ? null : _sendMessage,
               child: CircleAvatar(
                 backgroundColor: primaryCyan,
                 radius: 24,
